@@ -5,15 +5,31 @@ namespace App\Policies;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Str;
 
+/**
+ *
+ */
 class CoursePolicy
 {
+    /**
+     * @param $user
+     * @param $ability
+     * @return false|void
+     */
+    public function before($user, $ability)
+    {
+        $ability = 'courses-' . Str::slug($ability, '-');
+        if (!$user->hasPermissionTo($ability)) {
+            return false;
+        }
+    }
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +37,7 @@ class CoursePolicy
      */
     public function view(User $user, Course $courses): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +45,7 @@ class CoursePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +53,7 @@ class CoursePolicy
      */
     public function update(User $user, Course $courses): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -45,7 +61,7 @@ class CoursePolicy
      */
     public function delete(User $user, Course $courses): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +69,7 @@ class CoursePolicy
      */
     public function restore(User $user, Course $courses): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -61,6 +77,6 @@ class CoursePolicy
      */
     public function forceDelete(User $user, Course $courses): bool
     {
-        //
+        return true;
     }
 }

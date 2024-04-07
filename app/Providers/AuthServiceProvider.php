@@ -2,8 +2,17 @@
 
 namespace App\Providers;
 
+use App\Models\Admin;
+use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\Student;
+use App\Policies\AdminPolicy;
+use App\Policies\CoursePolicy;
+use App\Policies\EnrollmentPolicy;
+use App\Policies\StudentPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -14,6 +23,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Admin::class => AdminPolicy::class,
+        Student::class => StudentPolicy::class,
+        Course::class => CoursePolicy::class,
+        Enrollment::class => EnrollmentPolicy::class
     ];
 
     /**
@@ -21,6 +34,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole(config('role.admin')) ? true : null;
+        });
+
         $this->registerPolicies();
 
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
